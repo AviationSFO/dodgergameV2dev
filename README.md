@@ -15,8 +15,8 @@ curl https://raw.githubusercontent.com/AviationSFO/dodgergameV2dev/master/instal
 ```
 # Requirements
 1. pygame:
-```
-shell python3 -m pip install pygame
+```shell
+python3 -m pip install pygame
 ```
 2. Python version >= 3.6.0
 ### OS:
