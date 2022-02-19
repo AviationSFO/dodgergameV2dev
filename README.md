@@ -1,5 +1,5 @@
 # Dodger Game V2 Development Snapshot
-Move around to avoide getting hit by falling objects
+Move around to avoid getting hit by falling objects
 If you get hit you lose that round!
 
 # Instructions
