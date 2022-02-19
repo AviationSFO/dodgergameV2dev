@@ -1,258 +1,158 @@
-# Falling dodger Game in Python By Steven Weinstein on 1-20-2022
-# importing required modules
-import turtle
-import os
-import time
+# V2 of Falling dodger Game in Python By Steven Weinstein on 2-19-2022
+# Import and initialize required modules and functions
+import pygame
 import random
-import threading as thr
-TK_SILENCE_DEPRECATION=1
-delay = 0.025
+import time
+import os
+pygame.init()
+pygame.font.init()
+from pygame.locals import (
+    K_LEFT,
+    K_RIGHT,
+    K_ESCAPE,
+    K_SPACE,
+    K_p,
+    KEYDOWN,
+    QUIT,
+)
+SCREEN_WIDTH = 600
+SCREEN_HEIGHT = 600
+highscore = 0
 score = 0
-APIon = False
-score_this_round = 0
-APIdata = [None, None, None, None, None, None]
+pause = False
 highscoredoc = open(os.path.expanduser(
-    "~/Desktop/DodgerGame/highest_score_local.txt"), "r+")
-datadoc = open(os.path.expanduser(
-    "~/Desktop/DodgerGame/data.txt"), "a")
+    "~/Desktop/DodgerGameV2dev/highest_score_local.txt"), "r")
 highscore = highscoredoc.read()
-# Creating a window screen
-wn = turtle.Screen()
-wn.title("Dodger Game v1.3")
-wn.bgcolor("black")
-wn.setup(width=600, height=600)
-wn.tracer(0)
-# head of the avoider
-head = turtle.Turtle()
-head.shape("square")
-head.color("white")
-head.penup()
-head.goto(0, -280)
-head.direction = "Stop"
-fallspeed = 3
-# main faller class
-class Faller:
+highscoredoc.close()
+highscoredoc = open(os.path.expanduser(
+    "~/Desktop/DodgerGameV2dev/highest_score_local.txt"), "w")
+try:
+    highscore = int(highscore)
+except ValueError:
+    print("Error, high score is not an integer. Please fix this in order to save your high score.")
+    highscore = 0
+
+# Setting up game window
+running = True
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+pygame.display.set_caption('Dodger Game v2.0 EXPERIMENTAL')
+screen.fill((0,0,0))
+banner = f"Score : {score}  High Score : {highscore}"
+font = pygame.font.Font(pygame.font.get_default_font(), 36)
+myfont = pygame.font.SysFont('helvetica', 22)
+# textsurface = myfont.render(banner, False, (255, 255, 255))
+# screen.blit(textsurface,(150,0))
+screen.fill((0,0,0))
+# Setting up player classes
+class Player(pygame.sprite.Sprite):
     def __init__(self):
-        self.faller = turtle.Turtle()
-        self.faller.shape("square")
-        self.faller.color("green")
-        self.faller.penup()
-        self.randomize_location().move_down()
+        super(Player, self).__init__()
+        self.surf = pygame.Surface((24, 24))
+        self.surf.fill((255, 255, 255))
+        self.rect = self.surf.get_rect()
+        self.xpos = 300
+        self.ypos = 576
+        self.direction = "stop"
+    def update(self, pressed_keys, pause = False):
+        if pressed_keys[K_LEFT]:
+            self.direction = "left"
+        if pressed_keys[K_RIGHT]:
+            self.direction = "right"
+        if pressed_keys[K_SPACE]:
+            self.direction = "stop"
+        if not pause:
+            if self.direction == "left":
+                self.xpos -= 3
+            elif self.direction == "right":
+                self.xpos += 3
+# Faller class for falling objects
+class Faller(pygame.sprite.Sprite):
+    def __init__(self):
+        super(Faller, self).__init__()
+        self.surf = pygame.Surface((24,24))
+        self.surf.fill((48, 196, 22))
+        self.rect = self.surf.get_rect(
+            center=(
+                random.randint(SCREEN_WIDTH + 20, SCREEN_WIDTH + 100),
+                random.randint(0, SCREEN_HEIGHT),
+            )
+        )
+        self.speed = random.randint(2, 4)
+        self.xpos = random.randint(0,600)
+        self.ypos = 0
 
-    def goto(self):
-        self.faller.goto(self.xpos, self.ypos)
-        return self
+    # Move the sprite based on speed
+    # Remove the sprite when it passes the left edge of the screen
+    def update(self, score):
+        newscore = score
+        self.ypos += self.speed
+        if self.ypos >= SCREEN_HEIGHT-24:
+            if abs(self.xpos - player.xpos) >= 32:
+                newscore = score + 1
+            self.reset_location()
+        return newscore
+    def reset_location(self):
+        self.xpos = random.randint(0,600)
+        self.ypos = 0
 
-    def move_down(self):
-        self.ypos -= 2 * fallspeed
-        self.faller.goto(self.xpos, self.ypos)
-        return self
-
-    def randomize_location(self):
-        self.xpos = random.randrange(-280, 280, 30)
-        self.ypos = 290        
-        return self
-# fallers in the game
+def showtext(highscore, score):
+    banner = f"Score : {score}  High Score : {highscore}"
+    myfont = pygame.font.SysFont('helvetica', 30)
+    textsurface = myfont.render(banner, False, (255, 255, 255))
+    # screen.blit(textsurface,(150,0))
+    return textsurface
+player = Player()
 faller1 = Faller()
 faller2 = Faller()
 faller3 = Faller()
-faller4 = Faller()
-faller5 = Faller()
 
-# pen setup
-pen = turtle.Turtle()
-pen.speed(0)
-pen.shapesize(24)
-pen.shape("square")
-pen.color("white")
-pen.penup()
-pen.hideturtle()
-pen.goto(0, 250)
-pen.clear()
-pen.write(f"Score : 0  High Score : {highscore}", align="center",
-          font=("helvetica", 20, "bold"))
-
-# assigning keystrokes
-def goleft():
-    head.direction = "right"
-def goright():
-    head.direction = "left"
-def stop():
-    head.direction = "Stop"
-
-def move():
-    if head.direction == "right":
-        x = head.xcor()
-        head.setx(x-6)
-    if head.direction == "left":
-        x = head.xcor()
-        head.setx(x+6)
-
-def DEVTOOLRESET():
-    head.direction = "Stop"
-    head.goto(0,-280)
-    score = 0
-    fallspeed = 0
-    score_this_round = 0
-    time.sleep(2)
-    fallspeed = 3
-
-
-def APIactivate():
-    global APIon
-    APIon = True
-
-
-def APIproc():
-    dist1 = head.distance(faller1.faller)
-    dist2 = head.distance(faller2.faller)
-    dist3 = head.distance(faller3.faller)
-    dist4 = head.distance(faller4.faller)
-    dist5 = head.distance(faller5.faller)
-    APIdata[0] = dist1
-    APIdata[1] = dist2
-    APIdata[2] = dist3
-    APIdata[3] = dist4
-    APIdata[4] = dist5
-    APIdata[5] = (int(APIdata[0]) + int(APIdata[1]) + int(APIdata[2]) + int(APIdata[3]) + int(APIdata[4]))/5
-    datadoc.write(
-        f"({round(APIdata[0], 2)}),({round(APIdata[1], 2)}),({round(APIdata[2], 2)}),({round(APIdata[3], 2)}),({round(APIdata[4], 2)}),({round(APIdata[5], 3)}),\n")
-
-wn.listen()
-wn.onkeypress(goright, "Right")
-wn.onkeypress(goleft, "Left")
-wn.onkeypress(goright, "d")
-wn.onkeypress(goleft, "a")
-wn.onkeypress(goright, "D")
-wn.onkeypress(goleft, "A")
-wn.onkeypress(stop, " ")
-wn.onkeypress(DEVTOOLRESET, "r")
-wn.onkeypress(DEVTOOLRESET, "R")
-wn.onkeypress(APIactivate, "0")
-
-
-def checkdist(score_this_round):
-    score_this_round = int(score_this_round)
-    if head.distance(faller1.faller) < 20:
-        score_this_round -= 1
-        # pen.clear()
-        # pen.write(f"Score : {score} High Score : {highscore} ",
-        #     align="center", font=("helvetica", 20, "bold"))
-        faller1.randomize_location()
-    if head.distance(faller2.faller) < 20:
-        score_this_round -= 1
-        # pen.clear()
-        # pen.write(f"Score : {score} High Score : {highscore} ",
-        #     align="center", font=("helvetica", 20, "bold"))
-        faller2.randomize_location()
-    if head.distance(faller3.faller) < 20:
-        score_this_round -= 1
-        # pen.clear()
-        # pen.write(f"Score : {score} High Score : {highscore} ",
-        #     align="center", font=("helvetica", 20, "bold"))
-        faller3.randomize_location()
-    if head.distance(faller4.faller) < 20:
-        score_this_round -= 1
-        # pen.clear()
-        # pen.write(f"Score : {score} High Score : {highscore} ",
-        #     align="center", font=("helvetica", 20, "bold"))
-        faller4.randomize_location()
-    if head.distance(faller5.faller) < 20:
-        score_this_round -= 1
-        # pen.clear()
-        # pen.write(f"Score : {score} High Score : {highscore} ",
-        #     align="center", font=("helvetica", 20, "bold"))
-        faller5.randomize_location()
-
-
-
-# main loop
-while True:
-    wn.update()
+# Main loop for gameplay
+while running:
+    pressed_keys = pygame.key.get_pressed()
+    if pressed_keys[K_p]:
+        if pause:
+            pause = False
+        if not pause:
+            pause = True
+    while pause:
+        player.update(pressed_keys)
+        time.sleep(0.5)
+        if pressed_keys[K_p]:
+            if pause:
+                pause = False
+            if not pause:
+                pause = True
     if score > int(highscore):
         highscore = score
         highscoredoc.seek(0)
         highscoredoc.write(str(highscore))
-    faller1.move_down()
-    faller2.move_down()
-    faller3.move_down()
-    faller4.move_down()
-    faller5.move_down()
-    move()
-
-    if __name__ == "__main__":
-        # creating thread
-        t1 = thr.Thread(target=checkdist, args=(str(score_this_round)))
-        t1.start()
-
-    # if head.distance(faller1.faller) < 20:
-    #     score_this_round -= 1
-    #     pen.clear()
-    #     pen.write(f"Score : {score} High Score : {highscore} ",
-    #         align="center", font=("helvetica", 20, "bold"))
-    #     faller1.randomize_location()
-    # if head.distance(faller2.faller) < 20:
-    #     score_this_round -= 1
-    #     pen.clear()
-    #     pen.write(f"Score : {score} High Score : {highscore} ",
-    #         align="center", font=("helvetica", 20, "bold"))
-    #     faller1.randomize_location()
-    # if head.distance(faller3.faller) < 20:
-    #     score_this_round -= 1
-    #     pen.clear()
-    #     pen.write(f"Score : {score} High Score : {highscore} ",
-    #         align="center", font=("helvetica", 20, "bold"))
-    # if head.distance(faller4.faller) < 20:
-    #     score_this_round -= 1
-    #     pen.clear()
-    #     pen.write(f"Score : {score} High Score : {highscore} ",
-    #         align="center", font=("helvetica", 20, "bold"))
-    #     faller1.randomize_location()
-    if faller1.ypos < -280 and head.distance(faller1.faller) > 20:
-        score_this_round += 1
-        faller1.randomize_location()
-        fallspeed += 0.005
-    if faller2.ypos < -280 and head.distance(faller2.faller) > 20:
-        score_this_round += 1
-        faller2.randomize_location()
-        fallspeed += 0.005
-    if faller3.ypos < -280 and head.distance(faller3.faller) > 20:
-        score_this_round += 1
-        faller3.randomize_location()
-        fallspeed += 0.005
-    if faller4.ypos < -280 and head.distance(faller4.faller) > 20:
-        score_this_round += 1
-        faller4.randomize_location()
-        fallspeed += 0.005
-    if faller5.ypos < -280 and head.distance(faller5.faller) > 20:
-        score_this_round += 1
-        faller5.randomize_location()
-        fallspeed += 0.005
-
-    if head.xcor() > 290 or head.xcor() < -290 or head.ycor() > 290 or head.ycor() < -290:
-        head.goto(0, -280)
-        head.direction = "Stop"
-    if score_this_round == 5 or score_this_round > 5:
-        score += 1
-        score_this_round = 0
-    if int(score) < 0:
-        pen.goto(0, 100)
-        pen.write("GAME OVER!\nrestart game", align="center", font=("helvetica", 20, "bold"))
-        fallspeed = 0
-        time.sleep(3)
-        break
-    else:
-        pen.write(f"Score : {score} High Score : {highscore} ",
-            align="center", font=("helvetica", 20, "bold"))
-    pen.clear()
-    pen.write(f"Score : {score} High Score : {highscore} ",
-        align="center", font=("helvetica", 20, "bold"))
-    
-    if APIon == True:
-        if __name__ == "__main__":
-            # creating thread
-            t1 = thr.Thread(target=APIproc, args=())
-            t1.start()
-
-    time.sleep(delay)
-wn.mainloop()
+    for event in pygame.event.get():
+        # Did the user hit a key?
+        if event.type == KEYDOWN:
+            if event.key == K_ESCAPE:
+                running = False
+                break
+        elif event.type == QUIT:
+            running = False
+            break
+    player.update(pressed_keys)
+    score = faller1.update(score)
+    score = faller2.update(score)
+    score = faller3.update(score)
+    # Keeps player on the screen
+    if player.rect.left < 0:
+        player.rect.left = 0
+    if player.rect.right > SCREEN_WIDTH:
+        player.rect.right = SCREEN_WIDTH
+    if player.rect.top <= 0:
+        player.rect.top = 0
+    if player.rect.bottom >= SCREEN_HEIGHT:
+        player.rect.bottom = SCREEN_HEIGHT
+    screen.blit(player.surf, (player.xpos, player.ypos))
+    screen.blit(faller1.surf, (faller1.xpos, faller1.ypos))
+    screen.blit(faller2.surf, (faller2.xpos, faller2.ypos))
+    screen.blit(faller3.surf, (faller3.xpos, faller3.ypos))
+    textsurface = showtext(highscore, score)
+    screen.blit(textsurface,(150,0))
+    pygame.display.flip()
+    screen.fill((0, 0, 0))

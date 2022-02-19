@@ -50,3 +50,7 @@ Optimize for slower computers
 
 v1.3 - Multithreading and data
 implement data recording and multithreading
+
+
+
+v2.0 - PYGAME!
