@@ -3,14 +3,14 @@ Move around to avoid getting hit by falling objects
 
 If you get hit you lose that round!
 
-See installation options [here](#Installation script)
+See [installation options](#installation).
 # Instructions
 Arrow keys to move left and right. ~Press 0 to activate data recording~ (CURRENTLY INOP).
 
 # IMPORTANT FOR USE
 Make sure your source folder is called "dodgergameV2dev" on your desktop if on MAC OS or this will not work!
 
-# Installation script
+# Installation
 Copy and paste into terminal to install
 ```shell
 curl https://raw.githubusercontent.com/AviationSFO/dodgergameV2dev/master/install.sh | bash
