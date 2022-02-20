@@ -140,14 +140,12 @@ while running:
     score = faller2.update(score)
     score = faller3.update(score)
     # Keeps player on the screen
-    if player.rect.left < 0:
-        player.rect.left = 0
-    if player.rect.right > SCREEN_WIDTH:
-        player.rect.right = SCREEN_WIDTH
-    if player.rect.top <= 0:
-        player.rect.top = 0
-    if player.rect.bottom >= SCREEN_HEIGHT:
-        player.rect.bottom = SCREEN_HEIGHT
+    if player.xpos <= 24:
+        player.xpos = 300
+        player.direction = "stop"
+    if player.xpos >= 576:
+        player.xpos = 300
+        player.direction = "stop"
     screen.blit(player.surf, (player.xpos, player.ypos))
     screen.blit(faller1.surf, (faller1.xpos, faller1.ypos))
     screen.blit(faller2.surf, (faller2.xpos, faller2.ypos))
