@@ -4,6 +4,7 @@ import pygame
 import random
 import time
 import os
+import threading as thr
 pygame.init()
 pygame.font.init()
 from pygame.locals import (
@@ -14,11 +15,14 @@ from pygame.locals import (
     K_p,
     KEYDOWN,
     QUIT,
+    K_0,
 )
 SCREEN_WIDTH = 600
 SCREEN_HEIGHT = 600
 highscore = 0
 score = 0
+APIon = False
+APIdata = [None, None, None, None]
 global fallersurvived
 fallersurvived = 0
 pause = False
@@ -33,6 +37,9 @@ try:
 except ValueError:
     print("Error, high score is not an integer. Please fix this in order to save your high score.")
     highscore = 0
+
+datadoc = open(os.path.expanduser(
+    "~/Desktop/DodgerGameV2dev/data.txt"), "a")
 
 # Setting up game window
 running = True
@@ -62,6 +69,8 @@ class Player(pygame.sprite.Sprite):
             self.direction = "right"
         if pressed_keys[K_SPACE]:
             self.direction = "stop"
+        if pressed_keys[K_0]:
+            APItoggle()
         if not pause:
             if self.direction == "left":
                 self.xpos -= 3
@@ -107,10 +116,34 @@ def showtext(highscore, score):
     textsurface = myfont.render(banner, False, (255, 255, 255))
     # screen.blit(textsurface,(150,0))
     return textsurface
+
 player = Player()
 faller1 = Faller()
 faller2 = Faller()
 faller3 = Faller()
+
+def APIproc():
+    dist1 = abs(faller1.xpos - player.xpos)
+    dist2 = abs(faller2.xpos - player.xpos)
+    dist3 = abs(faller3.xpos - player.xpos)
+    # dist4 = head.distance(faller4.faller)
+    # dist5 = head.distance(faller5.faller)
+    APIdata[0] = str(dist1)
+    APIdata[1] = str(dist2)
+    APIdata[2] = str(dist3)
+    # APIdata[3] = dist4
+    # APIdata[4] = dist5
+    APIdata[3] = (int(APIdata[0]) + int(APIdata[1]) + int(APIdata[2]))/3
+    datadoc.write(
+        f"({round(int(APIdata[0]), 2)}),({round(int(APIdata[1]), 2)}),({round(int(APIdata[2]), 2)}),({round(int(APIdata[3]), 2)}),\n")
+def APItoggle():
+    global APIon
+    if APIon:
+        APIon = False
+    elif not APIon:
+        APIon = True
+    print("API toggled")
+
 
 # Main loop for gameplay
 while running:
@@ -152,6 +185,11 @@ while running:
     if player.xpos >= 576:
         player.xpos = 300
         player.direction = "stop"
+    if APIon == True:
+        if __name__ == "__main__":
+            # creating thread
+            APIthr = thr.Thread(target=APIproc, args=())
+            APIthr.start()
     screen.blit(player.surf, (player.xpos, player.ypos))
     screen.blit(faller1.surf, (faller1.xpos, faller1.ypos))
     screen.blit(faller2.surf, (faller2.xpos, faller2.ypos))
