@@ -1,4 +1,4 @@
-# V2 of Falling dodger Game in Python By Steven Weinstein on 2-19-2022
+# V2 of Falling dodger Game in Python By Steven Weinstein on 2-20-2022
 # Import and initialize required modules and functions
 import pygame
 import random
@@ -19,6 +19,8 @@ SCREEN_WIDTH = 600
 SCREEN_HEIGHT = 600
 highscore = 0
 score = 0
+global fallersurvived
+fallersurvived = 0
 pause = False
 highscoredoc = open(os.path.expanduser(
     "~/Desktop/DodgerGameV2dev/highest_score_local.txt"), "r")
@@ -84,11 +86,15 @@ class Faller(pygame.sprite.Sprite):
     # Move the sprite based on speed
     # Remove the sprite when it passes the left edge of the screen
     def update(self, score):
+        global fallersurvived
         newscore = score
         self.ypos += self.speed
         if self.ypos >= SCREEN_HEIGHT-24:
             if abs(self.xpos - player.xpos) >= 32:
-                newscore = score + 1
+                fallersurvived = fallersurvived + 1
+            if fallersurvived >= 3:
+                newscore = newscore + 1
+                fallersurvived = 0
             self.reset_location()
         return newscore
     def reset_location(self):
