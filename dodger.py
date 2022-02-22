@@ -1,4 +1,4 @@
-# V2 of Falling dodger Game in Python By Steven Weinstein on 2-20-2022
+# V2 of Falling dodger Game in Python By Steven Weinstein on 2-21-2022
 # Import and initialize required modules and functions
 import pygame
 import random
@@ -13,6 +13,7 @@ from pygame.locals import (
     K_ESCAPE,
     K_SPACE,
     K_p,
+    K_r,
     KEYDOWN,
     QUIT,
     K_0,
@@ -52,6 +53,19 @@ myfont = pygame.font.SysFont('helvetica', 22)
 # textsurface = myfont.render(banner, False, (255, 255, 255))
 # screen.blit(textsurface,(150,0))
 screen.fill((0,0,0))
+def writehs(n = highscore):
+    highscoredoc = open(os.path.expanduser(
+        "~/Desktop/DodgerGameV2dev/highest_score_local.txt"), "w")
+    highscoredoc.seek(0)
+    highscoredoc.write(str(n))
+def DEVTOOLRESET():
+    global score, highscore
+    writehs(0)
+    score = 0
+    highscore = 0
+    player.xpos = 300
+    player.direction = "stop"
+    time.sleep(2)
 # Setting up player classes
 class Player(pygame.sprite.Sprite):
     def __init__(self):
@@ -161,10 +175,11 @@ while running:
                 pause = False
             if not pause:
                 pause = True
+    if pressed_keys[K_r]:
+        DEVTOOLRESET()
     if score > int(highscore):
         highscore = score
-        highscoredoc.seek(0)
-        highscoredoc.write(str(highscore))
+        writehs()
     for event in pygame.event.get():
         # Did the user hit a key?
         if event.type == KEYDOWN:
