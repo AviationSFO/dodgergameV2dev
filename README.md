@@ -8,7 +8,7 @@ See [installation options](#installation).
 Arrow keys to move left and right. ~Press 0 to activate data recording~ (CURRENTLY INOP).
 
 # IMPORTANT FOR USE
-Make sure your source folder is called "dodgergameV2dev" on your desktop if on MAC OS or this will not work!
+Make sure your source folder is called "dodgergameV2dev" on your desktop or this will not work!
 
 # Installation
 Copy and paste into terminal to install
