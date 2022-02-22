@@ -5,7 +5,7 @@ If you get hit you lose that round!
 
 See [installation options](#installation).
 # Instructions
-Arrow keys to move left and right. ~Press 0 to activate data recording~ (CURRENTLY INOP).
+Arrow keys to move left and right. Press 0 to activate data recording (CURRENTLY BEING WORKED ON).
 
 # IMPORTANT FOR USE
 Make sure your source folder is called "dodgergameV2dev" on your desktop or this will not work!
