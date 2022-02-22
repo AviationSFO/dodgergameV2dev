@@ -5,6 +5,7 @@ import random
 import time
 import os
 import threading as thr
+from platform import python_version
 pygame.init()
 pygame.font.init()
 from pygame.locals import (
@@ -18,6 +19,17 @@ from pygame.locals import (
     QUIT,
     K_0,
 )
+print("Your python version is:")
+print(python_version())
+pyversion = python_version()
+if "3.6" in pyversion or "3.7" in pyversion or "3.8" in pyversion or "3.9" in pyversion or "3.10" in pyversion or "3.11" in pyversion:
+    print("Python version check pass")
+else:
+    print("v"*20)
+    print("Please upgrade your python to be version 3.6 or newer, terminating process")
+    print("^"*20)
+    quit()
+
 SCREEN_WIDTH = 600
 SCREEN_HEIGHT = 600
 highscore = 0
