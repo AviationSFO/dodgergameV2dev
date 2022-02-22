@@ -133,8 +133,34 @@ class Faller(pygame.sprite.Sprite):
             self.reset_location()
         return newscore
     def reset_location(self):
-        self.xpos = random.randint(0,600)
-        self.ypos = 0
+        oldxpos = self.xpos
+        if oldxpos == faller1.xpos:
+            current = 1
+        elif oldxpos == faller2.xpos:
+            current = 2
+        elif oldxpos == faller3.xpos:
+            current = 3
+        if current == 1:
+            while True:
+                newxpos = random.randint(0,600)
+                if abs(newxpos - faller2.xpos) > 50 and abs(newxpos - faller2.xpos) > 50:
+                    self.xpos = newxpos
+                    self.ypos = 0
+                    return; break
+        elif current == 2:
+            while True:
+                newxpos = random.randint(0,600)
+                if abs(newxpos - faller1.xpos) > 50 and abs(newxpos - faller3.xpos) > 50:
+                    self.xpos = newxpos
+                    self.ypos = 0
+                    return; break
+        elif current == 3:
+            while True:
+                newxpos = random.randint(0,600)
+                if abs(newxpos - faller1.xpos) > 50 and abs(newxpos - faller2.xpos) > 50:
+                    self.xpos = newxpos
+                    self.ypos = 0
+                    return; break
 
 def showtext(highscore, score):
     banner = f"Score : {score}  High Score : {highscore}"
@@ -156,8 +182,6 @@ def APIproc():
     dist1 = abs(faller1.xpos - player.xpos)
     dist2 = abs(faller2.xpos - player.xpos)
     dist3 = abs(faller3.xpos - player.xpos)
-    # dist4 = head.distance(faller4.faller)
-    # dist5 = head.distance(faller5.faller)
     APIdata[0] = str(dist1)
     APIdata[1] = str(dist2)
     APIdata[2] = str(dist3)
