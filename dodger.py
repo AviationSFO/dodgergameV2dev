@@ -24,6 +24,7 @@ highscore = 0
 score = 0
 APIon = False
 APIdata = [None, None, None, None]
+APIfrun = False
 global fallersurvived
 fallersurvived = 0
 pause = False
@@ -41,7 +42,6 @@ except ValueError:
 
 datadoc = open(os.path.expanduser(
     "~/Desktop/DodgerGameV2dev/data.txt"), "a")
-
 # Setting up game window
 running = True
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -137,6 +137,10 @@ faller2 = Faller()
 faller3 = Faller()
 
 def APIproc():
+    global APIfrun
+    if APIfrun:
+        print("API toggled")
+        APIfrun = False
     dist1 = abs(faller1.xpos - player.xpos)
     dist2 = abs(faller2.xpos - player.xpos)
     dist3 = abs(faller3.xpos - player.xpos)
@@ -151,12 +155,13 @@ def APIproc():
     datadoc.write(
         f"({round(int(APIdata[0]), 2)}),({round(int(APIdata[1]), 2)}),({round(int(APIdata[2]), 2)}),({round(int(APIdata[3]), 2)}),\n")
 def APItoggle():
-    global APIon
+    global APIon, APIfrun
     if APIon:
         APIon = False
+        APIfrun = False
     elif not APIon:
         APIon = True
-    print("API toggled")
+        APIfrun = True
 
 
 # Main loop for gameplay
