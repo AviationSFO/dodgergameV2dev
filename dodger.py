@@ -6,12 +6,10 @@ import time
 import os
 import threading as thr
 from platform import python_version
-try:
-    from playsound import playsound
-    noplaysound = False
-except:
-    noplaysound = True
 pygame.init()
+pygame.mixer.init()
+pygame.mixer.music.load(os.path.expanduser("~/Desktop/dodgergameV2dev/sounds/boop.mp3"))
+pygame.mixer.music.set_volume(0.7)
 pygame.font.init()
 from pygame.locals import (
     K_LEFT,
@@ -154,9 +152,7 @@ class Faller(pygame.sprite.Sprite):
                     self.xpos = newxpos
                     self.ypos = 0
                     if not noplaysound:
-                        if __name__ == "__main__":
-                            t1 = thr.Thread(target=playboop, args=())
-                            t1.start()
+                        pygame.mixer.music.play()
                     return; break
         elif current == 2:
             while True:
@@ -165,9 +161,7 @@ class Faller(pygame.sprite.Sprite):
                     self.xpos = newxpos
                     self.ypos = 0
                     if not noplaysound:
-                        if __name__ == "__main__":
-                            t1 = thr.Thread(target=playboop, args=())
-                            t1.start()
+                        pygame.mixer.music.play()
                     return; break
         elif current == 3:
             while True:
@@ -176,9 +170,7 @@ class Faller(pygame.sprite.Sprite):
                     self.xpos = newxpos
                     self.ypos = 0
                     if not noplaysound:
-                        if __name__ == "__main__":
-                            t1 = thr.Thread(target=playboop, args=())
-                            t1.start()
+                        pygame.mixer.music.play()
                     return; break
 
 def showtext(highscore, score):
