@@ -27,11 +27,11 @@ mute = True
 print("Your python version is:")
 print(python_version())
 pyversion = python_version()
-if "3.6" in pyversion or "3.7" in pyversion or "3.8" in pyversion or "3.9" in pyversion or "3.10" in pyversion or "3.11" in pyversion:
+if "3.7" in pyversion or "3.8" in pyversion or "3.9" in pyversion or "3.10" in pyversion or "3.11" in pyversion:
     print("Python version check pass")
 else:
     print("v"*20)
-    print("Please upgrade your python to be version 3.6 or newer, terminating process")
+    print("Please upgrade your python to be version 3.7 or newer, terminating process")
     print("^"*20)
     quit()
 
@@ -62,7 +62,7 @@ datadoc = open(os.path.expanduser(
 # Setting up game window
 running = True
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pygame.display.set_caption('Dodger Game v2.0 Pre-Release Candidate 4')
+pygame.display.set_caption('Dodger Game v2.0 Pre-Release Candidate 5')
 screen.fill((0,0,0))
 banner = f"Score : {score}  High Score : {highscore}"
 font = pygame.font.Font(pygame.font.get_default_font(), 36)
@@ -182,7 +182,7 @@ def showtext(highscore, score, end = False):
         textsurface = myfont.render(banner, False, (255, 255, 255))
         # screen.blit(textsurface,(150,0))
     else:
-        banner = "You Died\nGame Over!"
+        banner = "You Died!\nGame Over!"
         myfont = pygame.font.SysFont('helvetica', 30)
         textsurface = myfont.render(banner, False, (255, 255, 255))
     return textsurface
@@ -268,6 +268,12 @@ while running:
             # creating thread
             APIthr = thr.Thread(target=APIproc, args=())
             APIthr.start()
+    if abs(player.xpos - faller1.xpos) < 24 and abs(player.ypos - faller1.ypos) < 24:
+        score -= 1
+    elif abs(player.xpos - faller2.xpos) < 24 and abs(player.ypos - faller2.ypos) < 24:
+        score -= 1
+    elif abs(player.xpos - faller3.xpos) < 24 and abs(player.ypos - faller3.ypos) < 24:
+        score -= 1
     if score < 0:
         end = True
     screen.blit(player.surf, (player.xpos, player.ypos))
@@ -278,6 +284,11 @@ while running:
         textsurface = showtext(highscore, score)
     else:
         textsurface = showtext(highscore, score, True)
+        screen.blit(textsurface,(150,0))
+        pygame.display.flip()
+        screen.fill((0,0,0))
+        time.sleep(2)
+        break
     screen.blit(textsurface,(150,0))
     pygame.display.flip()
     screen.fill((0, 0, 0))

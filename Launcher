@@ -1,7 +1,2 @@
 #!/bin/sh
-if [ python -V -eq 2.7.16 ]
-then
-    python3 ~/Desktop/dodgergameV2dev/dodger.py
-else
-    python ~/Desktop/dodgergameV2dev/dodger.py
-fi
+python3 ~/Desktop/dodgergameV2dev/dodger.py
