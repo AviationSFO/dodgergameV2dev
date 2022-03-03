@@ -1,4 +1,4 @@
-# V2 of Falling dodger Game in Python By Steven Weinstein on 2-21-2022
+# V2 of Falling dodger Game in Python By Steven Weinstein on 3-3-2022
 # Import and initialize required modules and functions
 import pygame
 import random
@@ -6,6 +6,11 @@ import time
 import os
 import threading as thr
 from platform import python_version
+try:
+    from playsound import playsound
+    noplaysound = False
+except:
+    noplaysound = True
 pygame.init()
 pygame.font.init()
 from pygame.locals import (
@@ -57,7 +62,7 @@ datadoc = open(os.path.expanduser(
 # Setting up game window
 running = True
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pygame.display.set_caption('Dodger Game v2.0 EXPERIMENTAL')
+pygame.display.set_caption('Dodger Game v2.0 Pre-Release Candidate 1')
 screen.fill((0,0,0))
 banner = f"Score : {score}  High Score : {highscore}"
 font = pygame.font.Font(pygame.font.get_default_font(), 36)
@@ -78,6 +83,8 @@ def DEVTOOLRESET():
     player.xpos = 300
     player.direction = "stop"
     time.sleep(2)
+def playboop():
+    playsound(os.path.expanduser("~/Desktop/dodgergameV2dev/sounds/boop.mp3"))
 # Setting up player classes
 class Player(pygame.sprite.Sprite):
     def __init__(self):
@@ -146,6 +153,10 @@ class Faller(pygame.sprite.Sprite):
                 if abs(newxpos - faller2.xpos) > 50 and abs(newxpos - faller2.xpos) > 50:
                     self.xpos = newxpos
                     self.ypos = 0
+                    if not noplaysound:
+                        if __name__ == "__main__":
+                            t1 = thr.Thread(target=playboop, args=())
+                            t1.start()
                     return; break
         elif current == 2:
             while True:
@@ -153,6 +164,10 @@ class Faller(pygame.sprite.Sprite):
                 if abs(newxpos - faller1.xpos) > 50 and abs(newxpos - faller3.xpos) > 50:
                     self.xpos = newxpos
                     self.ypos = 0
+                    if not noplaysound:
+                        if __name__ == "__main__":
+                            t1 = thr.Thread(target=playboop, args=())
+                            t1.start()
                     return; break
         elif current == 3:
             while True:
@@ -160,6 +175,10 @@ class Faller(pygame.sprite.Sprite):
                 if abs(newxpos - faller1.xpos) > 50 and abs(newxpos - faller2.xpos) > 50:
                     self.xpos = newxpos
                     self.ypos = 0
+                    if not noplaysound:
+                        if __name__ == "__main__":
+                            t1 = thr.Thread(target=playboop, args=())
+                            t1.start()
                     return; break
 
 def showtext(highscore, score):
