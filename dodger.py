@@ -81,8 +81,6 @@ def DEVTOOLRESET():
     player.xpos = 300
     player.direction = "stop"
     time.sleep(2)
-def playboop():
-    playsound(os.path.expanduser("~/Desktop/dodgergameV2dev/sounds/boop.mp3"))
 # Setting up player classes
 class Player(pygame.sprite.Sprite):
     def __init__(self):
@@ -151,8 +149,7 @@ class Faller(pygame.sprite.Sprite):
                 if abs(newxpos - faller2.xpos) > 50 and abs(newxpos - faller2.xpos) > 50:
                     self.xpos = newxpos
                     self.ypos = 0
-                    if not noplaysound:
-                        pygame.mixer.music.play()
+                    pygame.mixer.music.play()
                     return; break
         elif current == 2:
             while True:
@@ -160,8 +157,7 @@ class Faller(pygame.sprite.Sprite):
                 if abs(newxpos - faller1.xpos) > 50 and abs(newxpos - faller3.xpos) > 50:
                     self.xpos = newxpos
                     self.ypos = 0
-                    if not noplaysound:
-                        pygame.mixer.music.play()
+                    pygame.mixer.music.play()
                     return; break
         elif current == 3:
             while True:
@@ -169,8 +165,7 @@ class Faller(pygame.sprite.Sprite):
                 if abs(newxpos - faller1.xpos) > 50 and abs(newxpos - faller2.xpos) > 50:
                     self.xpos = newxpos
                     self.ypos = 0
-                    if not noplaysound:
-                        pygame.mixer.music.play()
+                    pygame.mixer.music.play()
                     return; break
 
 def showtext(highscore, score):
