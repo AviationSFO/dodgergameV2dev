@@ -18,10 +18,12 @@ from pygame.locals import (
     K_SPACE,
     K_p,
     K_r,
+    K_m,
     KEYDOWN,
     QUIT,
     K_0,
 )
+mute = True
 print("Your python version is:")
 print(python_version())
 pyversion = python_version()
@@ -60,7 +62,7 @@ datadoc = open(os.path.expanduser(
 # Setting up game window
 running = True
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pygame.display.set_caption('Dodger Game v2.0 Pre-Release Candidate 3')
+pygame.display.set_caption('Dodger Game v2.0 Pre-Release Candidate 4')
 screen.fill((0,0,0))
 banner = f"Score : {score}  High Score : {highscore}"
 font = pygame.font.Font(pygame.font.get_default_font(), 36)
@@ -78,6 +80,12 @@ def DEVTOOLRESET():
     player.xpos = 300
     player.direction = "stop"
     time.sleep(2)
+def togglemute():
+    global mute
+    if mute:
+        mute = False
+    else:
+        mute = True
 # Setting up player classes
 class Player(pygame.sprite.Sprite):
     def __init__(self):
@@ -146,7 +154,8 @@ class Faller(pygame.sprite.Sprite):
                 if abs(newxpos - faller2.xpos) > 50 and abs(newxpos - faller2.xpos) > 50:
                     self.xpos = newxpos
                     self.ypos = 0
-                    pygame.mixer.music.play()
+                    if not mute:
+                        pygame.mixer.music.play()
                     return; break
         elif current == 2:
             while True:
@@ -154,7 +163,8 @@ class Faller(pygame.sprite.Sprite):
                 if abs(newxpos - faller1.xpos) > 50 and abs(newxpos - faller3.xpos) > 50:
                     self.xpos = newxpos
                     self.ypos = 0
-                    pygame.mixer.music.play()
+                    if not mute:
+                        pygame.mixer.music.play()
                     return; break
         elif current == 3:
             while True:
@@ -227,6 +237,8 @@ while running:
                 pause = True
     if pressed_keys[K_r]:
         DEVTOOLRESET()
+    if pressed_keys[K_m]:
+        togglemute()
     if score > int(highscore):
         highscore = score
         highscoredoc = open(os.path.expanduser("~/Desktop/dodgergameV2dev/highest_score_local.txt"), "w")
