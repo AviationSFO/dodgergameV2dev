@@ -60,22 +60,19 @@ datadoc = open(os.path.expanduser(
 # Setting up game window
 running = True
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pygame.display.set_caption('Dodger Game v2.0 Pre-Release Candidate 2')
+pygame.display.set_caption('Dodger Game v2.0 Pre-Release Candidate 3')
 screen.fill((0,0,0))
 banner = f"Score : {score}  High Score : {highscore}"
 font = pygame.font.Font(pygame.font.get_default_font(), 36)
 myfont = pygame.font.SysFont('helvetica', 22)
-# textsurface = myfont.render(banner, False, (255, 255, 255))
-# screen.blit(textsurface,(150,0))
 screen.fill((0,0,0))
-def writehs(n = highscore):
-    highscoredoc = open(os.path.expanduser(
-        "~/Desktop/DodgerGameV2dev/highest_score_local.txt"), "w")
-    highscoredoc.seek(0)
-    highscoredoc.write(str(n))
+def writehs():
+    highscoredoc = open(os.path.expanduser("~/Desktop/dodgergameV2dev/highest_score_local.txt"), "w")
+    highscoredoc.write(score)
 def DEVTOOLRESET():
     global score, highscore
-    writehs(0)
+    highscoredoc = open(os.path.expanduser("~/Desktop/dodgergameV2dev/highest_score_local.txt"), "w")
+    highscoredoc.write(str(score))
     score = 0
     highscore = 0
     player.xpos = 300
@@ -168,11 +165,16 @@ class Faller(pygame.sprite.Sprite):
                     pygame.mixer.music.play()
                     return; break
 
-def showtext(highscore, score):
-    banner = f"Score : {score}  High Score : {highscore}"
-    myfont = pygame.font.SysFont('helvetica', 30)
-    textsurface = myfont.render(banner, False, (255, 255, 255))
-    # screen.blit(textsurface,(150,0))
+def showtext(highscore, score, end = False):
+    if not end:
+        banner = f"Score : {score}  High Score : {highscore}"
+        myfont = pygame.font.SysFont('helvetica', 30)
+        textsurface = myfont.render(banner, False, (255, 255, 255))
+        # screen.blit(textsurface,(150,0))
+    else:
+        banner = "You Died\nGame Over!"
+        myfont = pygame.font.SysFont('helvetica', 30)
+        textsurface = myfont.render(banner, False, (255, 255, 255))
     return textsurface
 
 player = Player()
@@ -205,6 +207,7 @@ def APItoggle():
         APIon = True
         APIfrun = True
 
+end = False
 
 # Main loop for gameplay
 while running:
@@ -226,7 +229,8 @@ while running:
         DEVTOOLRESET()
     if score > int(highscore):
         highscore = score
-        writehs()
+        highscoredoc = open(os.path.expanduser("~/Desktop/dodgergameV2dev/highest_score_local.txt"), "w")
+        highscoredoc.write(str(score))
     for event in pygame.event.get():
         # Did the user hit a key?
         if event.type == KEYDOWN:
@@ -252,11 +256,16 @@ while running:
             # creating thread
             APIthr = thr.Thread(target=APIproc, args=())
             APIthr.start()
+    if score < 0:
+        end = True
     screen.blit(player.surf, (player.xpos, player.ypos))
     screen.blit(faller1.surf, (faller1.xpos, faller1.ypos))
     screen.blit(faller2.surf, (faller2.xpos, faller2.ypos))
     screen.blit(faller3.surf, (faller3.xpos, faller3.ypos))
-    textsurface = showtext(highscore, score)
+    if not end:
+        textsurface = showtext(highscore, score)
+    else:
+        textsurface = showtext(highscore, score, True)
     screen.blit(textsurface,(150,0))
     pygame.display.flip()
     screen.fill((0, 0, 0))
