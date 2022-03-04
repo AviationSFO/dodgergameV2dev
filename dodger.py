@@ -8,7 +8,7 @@ import threading as thr
 from platform import python_version
 pygame.init()
 pygame.mixer.init()
-pygame.mixer.music.load(os.path.expanduser("~/Desktop/dodgergameV2dev/sounds/boop.mp3"))
+pygame.mixer.music.load(os.path.expanduser("~/Desktop/dodgergame/sounds/boop.mp3"))
 pygame.mixer.music.set_volume(0.7)
 pygame.font.init()
 from pygame.locals import(
@@ -19,7 +19,6 @@ from pygame.locals import(
     K_p,
     K_r,
     K_m,
-    KEYDOWN,
     KEYUP,
     QUIT,
     K_0,
@@ -47,11 +46,11 @@ global fallersurvived
 fallersurvived = 0
 pause = False
 highscoredoc = open(os.path.expanduser(
-    "~/Desktop/DodgerGameV2dev/highest_score_local.txt"), "r")
+    "~/Desktop/dodgergame/highest_score_local.txt"), "r")
 highscore = highscoredoc.read()
 highscoredoc.close()
 highscoredoc = open(os.path.expanduser(
-    "~/Desktop/DodgerGameV2dev/highest_score_local.txt"), "w")
+    "~/Desktop/dodgergame/highest_score_local.txt"), "w")
 try:
     highscore = int(highscore)
 except ValueError:
@@ -59,22 +58,22 @@ except ValueError:
     highscore = 0
 
 datadoc = open(os.path.expanduser(
-    "~/Desktop/DodgerGameV2dev/data.txt"), "a")
+    "~/Desktop/dodgergame/data.txt"), "a")
 # Setting up game window
 running = True
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pygame.display.set_caption('Dodger Game v2.0 Pre-Release Candidate 5')
+pygame.display.set_caption('Dodger Game v2.0')
 screen.fill((0,0,0))
 banner = f"Score : {score}  High Score : {highscore}"
 font = pygame.font.Font(pygame.font.get_default_font(), 36)
 myfont = pygame.font.SysFont('helvetica', 22)
 screen.fill((0,0,0))
 def writehs():
-    highscoredoc = open(os.path.expanduser("~/Desktop/dodgergameV2dev/highest_score_local.txt"), "w")
+    highscoredoc = open(os.path.expanduser("~/Desktop/dodgergame/highest_score_local.txt"), "w")
     highscoredoc.write(score)
 def DEVTOOLRESET():
     global score, highscore
-    highscoredoc = open(os.path.expanduser("~/Desktop/dodgergameV2dev/highest_score_local.txt"), "w")
+    highscoredoc = open(os.path.expanduser("~/Desktop/dodgergame/highest_score_local.txt"), "w")
     highscoredoc.write(str(score))
     score = 0
     highscore = 0
@@ -241,7 +240,7 @@ while running:
                 pause = True
     if score > int(highscore):
         highscore = score
-        highscoredoc = open(os.path.expanduser("~/Desktop/dodgergameV2dev/highest_score_local.txt"), "w")
+        highscoredoc = open(os.path.expanduser("~/Desktop/dodgergame/highest_score_local.txt"), "w")
         highscoredoc.write(str(score))
     for event in pygame.event.get():
         # Did the user hit a key?

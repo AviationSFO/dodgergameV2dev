@@ -1,6 +1,6 @@
 cd ~/Desktop
-git clone https://github.com/AviationSFO/dodgergameV2dev
-cd dodgergameV2dev
+git clone https://github.com/AviationSFO/dodgergame
+cd dodgergame
 python3 -m pip install playsound
 python3 -m pip install PyObjC
 echo "Your python version is:"
