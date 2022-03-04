@@ -11,7 +11,7 @@ pygame.mixer.init()
 pygame.mixer.music.load(os.path.expanduser("~/Desktop/dodgergameV2dev/sounds/boop.mp3"))
 pygame.mixer.music.set_volume(0.7)
 pygame.font.init()
-from pygame.locals import (
+from pygame.locals import(
     K_LEFT,
     K_RIGHT,
     K_ESCAPE,
@@ -20,6 +20,7 @@ from pygame.locals import (
     K_r,
     K_m,
     KEYDOWN,
+    KEYUP,
     QUIT,
     K_0,
 )
@@ -135,6 +136,8 @@ class Faller(pygame.sprite.Sprite):
         if self.ypos >= SCREEN_HEIGHT-24:
             if abs(self.xpos - player.xpos) >= 32:
                 fallersurvived = fallersurvived + 1
+            else:
+                score -= 1
             if fallersurvived >= 3:
                 newscore = newscore + 1
                 fallersurvived = 0
@@ -222,6 +225,7 @@ end = False
 # Main loop for gameplay
 while running:
     pressed_keys = pygame.key.get_pressed()
+    
     if pressed_keys[K_p]:
         if pause:
             pause = False
@@ -235,20 +239,20 @@ while running:
                 pause = False
             if not pause:
                 pause = True
-    if pressed_keys[K_r]:
-        DEVTOOLRESET()
-    if pressed_keys[K_m]:
-        togglemute()
     if score > int(highscore):
         highscore = score
         highscoredoc = open(os.path.expanduser("~/Desktop/dodgergameV2dev/highest_score_local.txt"), "w")
         highscoredoc.write(str(score))
     for event in pygame.event.get():
         # Did the user hit a key?
-        if event.type == KEYDOWN:
+        if event.type == KEYUP:
             if event.key == K_ESCAPE:
                 running = False
-                break
+                break; quit()
+            if event.key == K_r:
+                DEVTOOLRESET()
+            if event.key == K_m:
+                togglemute()
         elif event.type == QUIT:
             running = False
             break
@@ -268,12 +272,6 @@ while running:
             # creating thread
             APIthr = thr.Thread(target=APIproc, args=())
             APIthr.start()
-    if abs(player.xpos - faller1.xpos) < 24 and abs(player.ypos - faller1.ypos) < 24:
-        score -= 1
-    elif abs(player.xpos - faller2.xpos) < 24 and abs(player.ypos - faller2.ypos) < 24:
-        score -= 1
-    elif abs(player.xpos - faller3.xpos) < 24 and abs(player.ypos - faller3.ypos) < 24:
-        score -= 1
     if score < 0:
         end = True
     screen.blit(player.surf, (player.xpos, player.ypos))
